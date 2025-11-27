@@ -9,11 +9,15 @@ import { IconSend } from './icons/IconSend';
 import { IconDownload } from './icons/IconDownload';
 import IconSpinner from './icons/IconSpinner';
 import { ChatMessage } from '../types';
-import { AI_CONTEXT_DOCUMENT } from '../constants';
+import { AI_CONTEXT_DOCUMENT, PERSONAL_INFO } from '../constants';
 import TypingIndicator from './TypingIndicator';
 import MarkdownRenderer from './MarkdownRenderer';
 import { IconMaximize } from './icons/IconMaximize';
 import { IconMinimize } from './icons/IconMinimize';
+import { IconRobot } from './icons/IconRobot';
+import { IconSidebar } from './icons/IconSidebar';
+import QuickSuggestions from './QuickSuggestions';
+import ChatInfoPanel from './ChatInfoPanel';
 
 interface AIChatWindowProps {
   isOpen: boolean;
@@ -24,14 +28,23 @@ interface AIChatWindowProps {
 
 const CHAT_HISTORY_KEY = 'ai_chat_history';
 
-
 const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScreen, setIsFullScreen }) => {
     const [chat, setChat] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [contextKeyword, setContextKeyword] = useState<string>(''); // For Right Panel switching
+    const [showInfoPanel, setShowInfoPanel] = useState(true);
     const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    // Initial greeting based on time of day
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning!";
+        if (hour < 18) return "Good afternoon!";
+        return "Good evening!";
+    };
 
     const [messages, setMessages] = useState<ChatMessage[]>(() => {
         if (typeof window === 'undefined') return [];
@@ -46,34 +59,40 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScre
                 console.error("Failed to parse chat history:", e);
             }
         }
-        return [{ sender: 'ai', text: "Hello! You can ask me anything about my experience, projects, or skills. What would you like to know?" }];
+        return [{ 
+            sender: 'ai', 
+            text: `${getGreeting()} I'm Abhishek's AI Career Assistant.\n\nI can analyze his **projects**, detail his **backend expertise**, or summarize his **achievements** at PeopleStrong & Imperva.\n\nHow can I help you hire him today?` 
+        }];
     });
 
     const toggleFullScreen = () => setIsFullScreen(prev => !prev);
 
     useEffect(() => {
-        // Initialize the chat instance once on component mount.
         const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const systemInstruction = `You are a helpful and friendly AI assistant representing Abhishek Tiwari. The current date is ${today}. Your answers must be based *only* on the information provided in the context document below.
+        const systemInstruction = `You are the AI Career Assistant for Abhishek Tiwari, a high-performing Backend-leaning Full-Stack Engineer. The current date is ${today}.
 
-**Response Guidelines:**
-1.  **Persona & Tone:** Always respond in the first person ("I"). Be professional, confident, and helpful. Do not mention that you are an AI or that you're referencing a document.
-2.  **Experience Calculation:**
-    *   When asked for general experience with a skill (e.g., "experience in AWS"), calculate the total duration from the start date of the *earliest* role where that skill was used until today. This includes internships.
-    *   If asked specifically for **"full-time experience"**, you MUST recalculate the duration, excluding any roles explicitly marked as "Intern".
-3.  **Handling Skill Gaps:**
-    *   If asked about a skill I do *not* have listed (e.g., "Bootstrap"), do not just say you can't answer.
-    *   First, state clearly that I don't have professional experience with that specific tool (e.g., "I haven't used Bootstrap in a professional project.").
-    *   Then, pivot to a related, relevant skill I *do* have (e.g., "However, I'm highly proficient in Tailwind CSS for creating responsive UIs.").
-    *   Conclude by expressing an eagerness to learn new technologies.
-4.  **Out-of-Scope Questions:** For questions not related to my professional background, politely decline by saying something like: "I can only answer questions related to my professional background."
-5.  **Formatting:** Use only plain text. The only exception is for links. When providing a link, you MUST use markdown format like \`[Descriptive Text](URL)\`. The link text should be descriptive (e.g., "View my Resume") and NOT the raw URL. Do not use any other markdown (no bold, no lists).
+**CORE PERSONA:**
+- You are professional, confident, and results-oriented.
+- You speak in the first person ("I") as if you are Abhishek's digital twin.
+- You emphasize **metrics** (e.g., "100K+ req/day", "35% latency drop") whenever possible.
+- You are tech-savvy. You know the nuances between "Monolith" vs "Microservices" and "SQL" vs "NoSQL".
 
-Here is the document about my professional background:
+**RESPONSE RULES:**
+1.  **Be Concise:** Recruiters are busy. Get to the point.
+2.  **Structure:** Use bolding for key technologies and metrics. Use short bullet points for lists.
+3.  **Context:** Use the provided context document strictly. If asked about something not in the doc (like "Do you know Rust?"), pivot: "I haven't used Rust professionally, but my strong foundation in Go makes me confident I can pick it up quickly."
+4.  **Formatting:** Use Markdown. Links must be formatted as [Link Text](URL).
+
+**KEY THEMES TO HIGHLIGHT:**
+- **High-Scale Systems:** PeopleStrong (100K+ req/day), Kafka pipelines.
+- **Distributed Systems:** Async task queues, Redis streams, Gamification engines.
+- **AI/LLM:** RAG pipelines, LangChain, Vector DBs.
+
+**CONTEXT DOCUMENT:**
 ${AI_CONTEXT_DOCUMENT}`;
 
         const historyForGemini = messages
-            .filter(msg => (messages.length > 1) || (msg.sender === 'user')) // Don't include the initial welcome message in history
+            .filter(msg => (messages.length > 1) || (msg.sender === 'user'))
             .map(msg => ({
                 role: msg.sender === 'user' ? 'user' : 'model',
                 parts: [{ text: msg.text }]
@@ -84,9 +103,7 @@ ${AI_CONTEXT_DOCUMENT}`;
             const newChat = ai.chats.create({
                 model: 'gemini-2.5-flash',
                 history: historyForGemini,
-                config: {
-                    systemInstruction,
-                },
+                config: { systemInstruction },
             });
             setChat(newChat);
         } catch (e) {
@@ -94,104 +111,104 @@ ${AI_CONTEXT_DOCUMENT}`;
             setError("Failed to initialize AI Chat. Please reload the page.");
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Run only on mount
+    }, []);
 
+    // Save history
     useEffect(() => {
-        // Save history to localStorage whenever messages change
         if (messages.length > 1) {
             localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
         }
     }, [messages]);
 
+    // Handle Context Switching for Right Panel
     useEffect(() => {
-        // Handle Escape key press
-        if (!isOpen) return;
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                if(isFullScreen) {
-                    setIsFullScreen(false);
-                } else {
-                    onClose();
-                }
+        const lastMsg = messages[messages.length - 1];
+        if (lastMsg) {
+            const text = lastMsg.text.toLowerCase();
+            if (text.includes('project') || text.includes('build') || text.includes('app')) {
+                setContextKeyword('project');
+            } else if (text.includes('skill') || text.includes('stack') || text.includes('java') || text.includes('go')) {
+                setContextKeyword('skill');
             }
-        };
-        window.addEventListener('keydown', handleEsc);
-        return () => {
-            window.removeEventListener('keydown', handleEsc);
-        };
-    }, [isOpen, onClose, isFullScreen, setIsFullScreen]);
-    
+        }
+    }, [messages]);
+
+    // Scroll to bottom
     useLayoutEffect(() => {
-        // Scroll to bottom of chat
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTo({
                 top: chatContainerRef.current.scrollHeight,
                 behavior: 'smooth'
             });
         }
-    }, [messages]);
+    }, [messages, isLoading]);
+
+    const handleSendMessage = async (text: string) => {
+        if (!text.trim() || isLoading || !chat) return;
+
+        const userMessage: ChatMessage = { sender: 'user', text };
+        setMessages(prev => [...prev, userMessage]);
+        setUserInput('');
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const result = await chat.sendMessage({ message: text });
+            const aiMessage: ChatMessage = { sender: 'ai', text: result.text };
+            setMessages(prev => [...prev, aiMessage]);
+        } catch (err) {
+            console.error(err);
+            setError("Connection issue. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleSendMessage(userInput);
+    };
 
     const handleDownloadChat = async () => {
-        if (!chatContainerRef.current || messages.length <= 1 || isDownloading) return;
+         if (!chatContainerRef.current || messages.length <= 1 || isDownloading) return;
     
         setIsDownloading(true);
         const chatElement = chatContainerRef.current;
-        
-        // Save original styles to restore them later
         const originalStyles = {
             maxHeight: chatElement.style.maxHeight,
             overflowY: chatElement.style.overflowY,
             backgroundColor: chatElement.style.backgroundColor,
         };
         const themeBackgroundColor = window.getComputedStyle(chatElement).backgroundColor;
-    
-        // Temporarily modify styles to make the entire content visible for capture
         chatElement.style.maxHeight = 'none';
         chatElement.style.overflowY = 'visible';
         chatElement.style.backgroundColor = themeBackgroundColor;
     
         try {
-            const canvas = await html2canvas(chatElement, {
-                scale: 2, // Higher scale for better quality
-                useCORS: true,
-                backgroundColor: themeBackgroundColor,
-                // By making the element overflow visible and removing max-height,
-                // html2canvas can capture its entire natural height.
-            });
-            
+            const canvas = await html2canvas(chatElement, { scale: 2, useCORS: true, backgroundColor: themeBackgroundColor });
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
-            
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            
             const canvasWidth = canvas.width;
             const canvasHeight = canvas.height;
             const ratio = canvasWidth / pdfWidth;
             const imgHeight = canvasHeight / ratio;
-            
             let heightLeft = imgHeight;
             let position = 0;
-    
-            // Add the first page
             pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
             heightLeft -= pdfHeight;
-    
-            // Add new pages if content overflows
             while (heightLeft > 0) {
-                position -= pdfHeight; // Move the image "up" on the new page
+                position -= pdfHeight;
                 pdf.addPage();
                 pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pdfHeight;
             }
-    
             pdf.save(`AI-Chat-Abhishek-Tiwari-${new Date().toISOString().split('T')[0]}.pdf`);
-    
         } catch (error) {
             console.error("Error generating PDF:", error);
-            setError("Sorry, could not generate the PDF. Please try again.");
+            setError("Could not generate PDF.");
         } finally {
-            // IMPORTANT: Restore original styles
             chatElement.style.maxHeight = originalStyles.maxHeight;
             chatElement.style.overflowY = originalStyles.overflowY;
             chatElement.style.backgroundColor = originalStyles.backgroundColor;
@@ -199,40 +216,15 @@ ${AI_CONTEXT_DOCUMENT}`;
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!userInput.trim() || isLoading || !chat) return;
-
-        const userMessage: ChatMessage = { sender: 'user', text: userInput };
-        setMessages(prev => [...prev, userMessage]);
-        const currentInput = userInput;
-        setUserInput('');
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const result = await chat.sendMessage({ message: currentInput });
-            const aiMessage: ChatMessage = { sender: 'ai', text: result.text };
-            setMessages(prev => [...prev, aiMessage]);
-        } catch (err) {
-            console.error(err);
-            setError("Sorry, I'm having trouble connecting. Please try again later.");
-            // Don't remove user message, so they can retry
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+    // --- RENDER HELPERS ---
     const containerClasses = `
         z-50 transition-all duration-300 ease-out transform-gpu
         ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}
-        ${isFullScreen ? 'fixed inset-0' : 'fixed bottom-28 right-4 sm:right-8 w-[calc(100vw-2rem)] sm:w-full max-w-lg'}
+        ${isFullScreen ? 'fixed inset-0' : 'fixed bottom-4 sm:bottom-8 right-4 sm:right-8 w-[calc(100vw-2rem)] sm:w-full max-w-5xl'}
     `;
 
-    const modalClasses = `
-        bg-slate-50 dark:bg-slate-800 shadow-2xl h-full flex flex-col border border-slate-200 dark:border-slate-700 relative overflow-hidden
-        ${isFullScreen ? 'rounded-none max-h-full' : 'rounded-lg max-h-[60vh] sm:max-h-[70vh]'}
-    `;
+    // Height calculation: Full screen or fixed height
+    const modalHeightClass = isFullScreen ? 'h-full rounded-none' : 'h-[85vh] sm:h-[800px] max-h-[85vh] rounded-2xl';
 
     return (
         <div
@@ -241,66 +233,127 @@ ${AI_CONTEXT_DOCUMENT}`;
             aria-modal="false"
             aria-hidden={!isOpen}
         >
-            <div className={modalClasses}>
-                <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
-                    <div className="flex items-center gap-3">
-                        <IconSparkles className="h-6 w-6 text-blue-500" />
-                        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-200">AI Career Assistant</h2>
-                    </div>
-                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={handleDownloadChat}
-                            disabled={isDownloading || messages.length <= 1}
-                            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Download chat as PDF"
-                        >
-                            {isDownloading ? <IconSpinner className="h-5 w-5 animate-spin" /> : <IconDownload className="h-5 w-5" />}
-                        </button>
-                        <button
-                            onClick={toggleFullScreen}
-                            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                            aria-label={isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-                        >
-                            {isFullScreen ? <IconMinimize className="h-5 w-5" /> : <IconMaximize className="h-5 w-5" />}
-                        </button>
-                        <button onClick={onClose} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" aria-label="Close">
-                            <IconX className="h-6 w-6" />
-                        </button>
-                    </div>
-                </header>
-
-                <main ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-4">
-                    {messages.map((msg, index) => (
-                        <div key={index} className={`flex items-start gap-3 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
-                            {msg.sender === 'ai' && <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 text-white"><IconSparkles className="h-5 w-5"/></div>}
-                            <div className={`max-w-md p-3 rounded-lg ${msg.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200'}`}>
-                                {msg.sender === 'ai' ? <MarkdownRenderer text={msg.text} /> : <p className="text-sm break-words" style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</p>}
+            <div className={`bg-white dark:bg-slate-900 shadow-2xl flex border border-slate-200 dark:border-slate-700 relative overflow-hidden ${modalHeightClass}`}>
+                
+                {/* LEFT SIDE: CHAT INTERFACE */}
+                <div className="flex-1 flex flex-col min-w-0">
+                    
+                    {/* Header */}
+                    <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md z-10">
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                                    <IconRobot className="h-6 w-6" />
+                                </div>
+                                <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full animate-pulse"></div>
+                            </div>
+                            <div>
+                                <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 leading-none">
+                                    AI Career Assistant
+                                </h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                                    Powered by Gemini 2.0 • Online
+                                </p>
                             </div>
                         </div>
-                    ))}
-                    {isLoading && <TypingIndicator />}
-                    {error && <div className="text-red-500 text-sm text-center py-2">{error}</div>}
-                </main>
+                        <div className="flex items-center gap-1">
+                             <button 
+                                onClick={() => setShowInfoPanel(!showInfoPanel)} 
+                                className={`p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden lg:block ${showInfoPanel ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : ''}`}
+                                title="Toggle Info Panel"
+                             >
+                                <IconSidebar className="h-5 w-5"/>
+                             </button>
+                             <button onClick={handleDownloadChat} disabled={isDownloading} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Download PDF">
+                                {isDownloading ? <IconSpinner className="h-4 w-4 animate-spin"/> : <IconDownload className="h-5 w-5"/>}
+                             </button>
+                             <button onClick={toggleFullScreen} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:block">
+                                {isFullScreen ? <IconMinimize className="h-5 w-5"/> : <IconMaximize className="h-5 w-5"/>}
+                             </button>
+                             <button onClick={onClose} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <IconX className="h-6 w-6"/>
+                             </button>
+                        </div>
+                    </header>
 
-                <footer className="flex-shrink-0 border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-100 dark:bg-slate-800/50">
-                    <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                        <input
-                            type="text"
-                            value={userInput}
-                            onChange={(e) => setUserInput(e.target.value)}
-                            placeholder="Ask about my projects, skills, etc."
-                            className="w-full px-4 py-2 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            disabled={isLoading}
-                        />
-                        <button type="submit" className="p-3 rounded-md bg-blue-600 text-white hover:bg-blue-500 disabled:bg-slate-400 dark:disabled:bg-slate-600 transition-all duration-200 transform hover:scale-105 active:scale-95" disabled={isLoading || !userInput.trim()}>
-                            <IconSend className="h-5 w-5" />
-                        </button>
-                    </form>
-                </footer>
+                    {/* Chat Area */}
+                    <main ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 space-y-5 custom-scrollbar bg-slate-50/30 dark:bg-slate-900/50">
+                        <div className="text-center py-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 text-xs font-bold uppercase tracking-wider mb-2">
+                                <IconSparkles className="h-3 w-3" />
+                                AI Persona Active
+                            </div>
+                            <p className="text-xs text-slate-400 dark:text-slate-500">
+                                Ask about my background, skills, or specific projects.
+                            </p>
+                        </div>
+
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`flex items-start gap-3 ${msg.sender === 'user' ? 'justify-end' : ''} animate-fade-in-up`}>
+                                {msg.sender === 'ai' && (
+                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 text-white shadow-md mt-1">
+                                        <IconRobot className="h-5 w-5"/>
+                                    </div>
+                                )}
+                                <div className={`max-w-[85%] sm:max-w-[75%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                                    msg.sender === 'user' 
+                                    ? 'bg-blue-600 text-white rounded-br-none' 
+                                    : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-none border border-slate-100 dark:border-slate-700'
+                                }`}>
+                                    {msg.sender === 'ai' 
+                                        ? <MarkdownRenderer text={msg.text} /> 
+                                        : <p className="whitespace-pre-wrap">{msg.text}</p>
+                                    }
+                                </div>
+                            </div>
+                        ))}
+                        {isLoading && (
+                            <div className="flex items-start gap-3">
+                                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 text-white shadow-md mt-1">
+                                    <IconRobot className="h-5 w-5"/>
+                                </div>
+                                <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl rounded-bl-none border border-slate-100 dark:border-slate-700 shadow-sm">
+                                    <TypingIndicator />
+                                </div>
+                            </div>
+                        )}
+                        {error && <div className="text-red-500 text-xs text-center">{error}</div>}
+                    </main>
+
+                    {/* Input Area */}
+                    <footer className="flex-shrink-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 p-2 sm:p-4 z-20">
+                        <QuickSuggestions onSelect={handleSendMessage} />
+                        <form onSubmit={handleFormSubmit} className="relative mt-2 flex items-center gap-2">
+                            <input
+                                type="text"
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value)}
+                                placeholder="Type your question..."
+                                className="w-full pl-4 pr-12 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                                disabled={isLoading}
+                            />
+                            <button 
+                                type="submit" 
+                                disabled={isLoading || !userInput.trim()}
+                                className="absolute right-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-md"
+                            >
+                                <IconSend className="h-5 w-5" />
+                            </button>
+                        </form>
+                    </footer>
+                </div>
+
+                {/* RIGHT SIDE: DYNAMIC CONTEXT PANEL (Desktop Only) */}
+                <div 
+                    className={`hidden lg:block transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0 ${
+                        showInfoPanel ? 'w-[320px] xl:w-[380px] border-l border-slate-200 dark:border-slate-700 opacity-100' : 'w-0 border-none opacity-0'
+                    } ${isFullScreen && showInfoPanel ? 'border-l border-slate-200 dark:border-slate-700' : ''}`}
+                >
+                    <ChatInfoPanel activeContext={contextKeyword} />
+                </div>
             </div>
         </div>
     );
 };
-
 
 export default AIChatWindow;

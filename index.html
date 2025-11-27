@@ -12,6 +12,7 @@
       :root {
         --grid-line-dark: rgba(30, 41, 59, 0.8);
         --grid-line-light: rgba(226, 232, 240, 0.8);
+        --accent-blue: #3B82F6;
       }
       body::before {
         content: '';
@@ -21,38 +22,56 @@
         width: 100vw;
         height: 100vh;
         background-image: linear-gradient(to right, var(--grid-line-dark) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line-dark) 1px, transparent 1px);
-        background-size: 2rem 2rem;
+        background-size: 3rem 3rem;
         z-index: -10;
-        opacity: 0.5;
+        opacity: 0.3;
       }
       html.light body::before {
         background-image: linear-gradient(to right, var(--grid-line-light) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line-light) 1px, transparent 1px);
+        opacity: 0.6;
       }
       .tabular-nums {
         font-variant-numeric: tabular-nums;
       }
-      /* Custom scrollbar for GitHub calendar */
-      .github-calendar-container {
-        padding-bottom: 0.75rem; /* Space for scrollbar */
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
       }
-      .github-calendar-container::-webkit-scrollbar {
-        height: 6px;
-      }
-      .github-calendar-container::-webkit-scrollbar-track {
+      ::-webkit-scrollbar-track {
         background: transparent;
       }
-      .github-calendar-container::-webkit-scrollbar-thumb {
-        background-color: #e2e8f0; /* slate-200 */
-        border-radius: 3px;
+      ::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 4px;
       }
-      .github-calendar-container::-webkit-scrollbar-thumb:hover {
-        background-color: #cbd5e1; /* slate-300 */
+      html.dark ::-webkit-scrollbar-thumb {
+        background-color: #475569;
       }
-      html.dark .github-calendar-container::-webkit-scrollbar-thumb {
-        background-color: #334155; /* slate-700 */
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
       }
-      html.dark .github-calendar-container::-webkit-scrollbar-thumb:hover {
-        background-color: #475569; /* slate-600 */
+
+      /* No Scrollbar Utility */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      
+      /* Thin Scrollbar Utility */
+      .thin-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+      }
+      html.dark .glass-card {
+        background: rgba(30, 41, 59, 0.4);
       }
     </style>
     <script>
@@ -64,61 +83,43 @@
               sans: ['Inter', 'sans-serif'],
             },
             colors: {
-              'slate': {
-                950: '#020617',
+              slate: {
+                850: '#151e2e',
                 900: '#0f172a',
-                800: '#1e293b',
-                700: '#334155',
-                600: '#475569',
-                500: '#64748b',
-                400: '#94a3b8',
-                300: '#cbd5e1',
-                200: '#e2e8f0',
-                100: '#f1f5f9',
-                50: '#f8fafc',
+                950: '#020617',
               },
-              'cyan': {
-                300: '#67e8f9',
-                400: '#22d3ee',
-                500: '#06b6d4',
-                600: '#0891b2',
-              },
-               'fuchsia': {
-                400: '#c026d3',
-              },
-              'blue': {
-                 300: '#93c5fd',
-                 400: '#60a5fa',
-                 500: '#3b82f6',
-                 600: '#2563eb',
+              blue: {
+                450: '#4cc9f0',
+                500: '#3B82F6', /* Primary Accent */
+                600: '#2563eb',
               }
             },
             boxShadow: {
-              'glow-blue': '0 0 20px rgba(59, 130, 246, 0.5)',
-            },
-            dropShadow: {
-               'glow-cyan': '0 0 5px rgba(34, 211, 238, 0.7)',
+              'glow-blue': '0 0 30px rgba(59, 130, 246, 0.3)',
+              'glow-card': '0 0 20px rgba(59, 130, 246, 0.1)',
+              'subtle': '0 2px 10px rgba(0,0,0,0.03)',
+              'premium': '0 10px 40px -10px rgba(0,0,0,0.1)',
             },
             animation: {
               spotlight: "spotlight 2s ease .75s 1 forwards",
               spin: 'spin 1s linear infinite',
               shine: 'shine 1.2s ease-out',
+              'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
               spotlight: {
-                "0%": {
-                  opacity: 0,
-                  transform: "translate(-72%, -62%) scale(0.5)",
-                },
-                "100%": {
-                  opacity: 1,
-                  transform: "translate(-50%,-40%) scale(1)",
-                },
+                "0%": { opacity: 0, transform: "translate(-72%, -62%) scale(0.5)" },
+                "100%": { opacity: 1, transform: "translate(-50%,-40%) scale(1)" },
               },
               shine: {
                 'from': { transform: 'translateX(-100%) skewX(-15deg)' },
                 'to': { transform: 'translateX(125%) skewX(-15deg)' },
               },
+              fadeInUp: {
+                '0%': { opacity: 0, transform: 'translateY(20px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              }
             },
           }
         }
@@ -127,18 +128,20 @@
   <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.1.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+    "react/": "https://esm.sh/react@18.3.1/",
     "@google/genai": "https://esm.sh/@google/genai",
-    "react-github-calendar": "https://esm.sh/react-github-calendar@^4.1.5",
+    "react-github-calendar": "https://esm.sh/react-github-calendar@^4.1.5?external=react,react-dom",
     "jspdf": "https://esm.sh/jspdf@2.5.1",
-    "html2canvas": "https://esm.sh/html2canvas@1.4.1"
+    "html2canvas": "https://esm.sh/html2canvas@1.4.1",
+    "recharts": "https://esm.sh/recharts@2.12.7?external=react,react-dom"
   }
 }
 </script>
 </head>
-  <body class="antialiased">
+  <body class="antialiased overflow-x-hidden selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
     <div id="root"></div>
   </body>
 </html>

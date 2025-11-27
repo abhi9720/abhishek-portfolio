@@ -14,6 +14,7 @@ import { IconCloud } from './components/icons/IconCloud';
 import { IconDatabase } from './components/icons/IconDatabase';
 import { IconApi } from './components/icons/IconApi';
 import { IconBrain } from './components/icons/IconBrain';
+import { IconSparkles } from './components/icons/IconSparkles';
 
 export const PERSONAL_INFO = {
   name: 'Abhishek “Abhi” Tiwari',
@@ -42,17 +43,17 @@ export const SOCIAL_LINKS: Link[] = [
 export const KEY_HIGHLIGHTS: KeyHighlight[] = [
     {
         metric: '100K+ req/day',
-        description: 'Handled microservices & achieved a 35% latency drop.',
+        description: 'Designed & optimized high-load microservices, reducing latency by 35%.',
         icon: React.createElement(IconTrophy)
     },
     {
         metric: '99.9% Reliability',
-        description: 'Built a resilient async distributed task system.',
+        description: 'Architected a resilient async distributed task system with DLQ & monitoring.',
         icon: React.createElement(IconTrophy)
     },
     {
         metric: '50K+ Daily Users',
-        description: 'Engineered a real-time gamification platform.',
+        description: 'Engineered real-time gamification & WebSocket pipelines.',
         icon: React.createElement(IconTrophy)
     },
 ];
@@ -178,27 +179,32 @@ export const CURRENT_INTERESTS: string[] = [
 
 export const SKILL_CATEGORIES: CategorizedSkillGroup[] = [
     {
-        name: 'Technologies & Tooling',
+        name: 'AI & LLM Engineering',
+        icon: React.createElement(IconSparkles, { className: 'h-6 w-6' }),
+        skills: ['LangChain', 'OpenAI API', 'RAG Pipelines', 'Vector Databases', 'Prompt Engineering', 'LLM Orchestration', 'Python'],
+    },
+    {
+        name: 'Core Backend Technologies',
         icon: React.createElement(IconCode, { className: 'h-6 w-6' }),
-        skills: ['Java', 'Golang', 'TypeScript', 'JavaScript (ES6)', 'Python', 'React.js', 'Angular 10', 'Spring Boot', 'Node.js', 'Express.js', 'Hibernate', 'GORM', 'Gin', 'Tailwind CSS', 'HTML/CSS', 'Git', 'Maven', 'Postman', 'Bash', 'System Design', 'Algorithm Optimization'],
+        skills: ['Java', 'Spring Boot', 'Golang', 'Gin', 'Node.js', 'Express.js', 'Hibernate', 'GORM', 'Microservices', 'System Design', 'Algorithms'],
     },
     {
-        name: 'Cloud & DevOps',
+        name: 'Infrastructure & Observability',
         icon: React.createElement(IconCloud, { className: 'h-6 w-6' }),
-        skills: ['AWS (EC2, RDS, S3, VPC)', 'Docker', 'Kubernetes', 'CI/CD', 'Prometheus'],
+        skills: ['AWS (EC2, RDS, S3, VPC)', 'Docker', 'Kubernetes', 'CI/CD', 'Prometheus', 'Bash Scripting'],
     },
     {
-        name: 'Databases',
+        name: 'Data & Storage Systems',
         icon: React.createElement(IconDatabase, { className: 'h-6 w-6' }),
-        skills: ['MySQL', 'PostgreSQL', 'Redis', 'MongoDB', 'Oracle SQL', 'IndexedDB'],
+        skills: ['MySQL', 'PostgreSQL', 'Redis (Caching/Queues)', 'MongoDB', 'Oracle SQL', 'IndexedDB'],
     },
     {
-        name: 'APIs & Integration',
+        name: 'Services & Integrations',
         icon: React.createElement(IconApi, { className: 'h-6 w-6' }),
-        skills: ['Apache Kafka', 'Socket.io', 'JWT', 'WebSockets', 'Swagger', 'OpenAI API', 'LangChain', 'LLM Integration', 'Vector DBs (RAG)'],
+        skills: ['Apache Kafka', 'WebSockets', 'Socket.io', 'REST APIs', 'gRPC', 'JWT Auth', 'Swagger/OpenAPI'],
     },
     {
-        name: 'Current Interests & Learning',
+        name: 'Learning & Research',
         icon: React.createElement(IconBrain, { className: 'h-6 w-6' }),
         skills: [...CURRENT_INTERESTS],
     },

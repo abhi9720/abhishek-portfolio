@@ -51,7 +51,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300 transition-colors duration-300 selection:bg-blue-200 dark:selection:bg-blue-900">
        <div 
         className="pointer-events-none fixed inset-0 z-30 transition duration-300 lg:absolute"
         style={{
@@ -60,7 +60,8 @@ const App: React.FC = () => {
       ></div>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <Header activeSection={activeSection} />
-        <main className="space-y-20 sm:space-y-24 md:space-y-32 pb-20">
+        {/* Increased spacing to space-y-32 for better hierarchy */}
+        <main className="space-y-32 pb-32">
           <AnimatedSection><About /></AnimatedSection>
           <AnimatedSection><Experience /></AnimatedSection>
           <AnimatedSection><Projects /></AnimatedSection>
