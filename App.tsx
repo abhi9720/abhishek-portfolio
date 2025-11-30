@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Header from './components/Header';
 import About from './components/About';
 import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Publications from './components/Publications';
+import EducationAndCertifications from './components/EducationAndCertifications';
 import Footer from './components/Footer';
 import AnimatedSection from './components/AnimatedSection';
 import { useScrollSpy } from './hooks/useScrollSpy';
@@ -12,6 +14,7 @@ import GitHubActivity from './components/GitHubActivity';
 import { useTheme } from './contexts/ThemeContext';
 import AIAssistantButton from './components/AIAssistantButton';
 import AIChatModal from './components/AIChatModal';
+import { SHOW_GITHUB_ACTIVITY } from './constants';
 
 const App: React.FC = () => {
   const [coords, setCoords] = useState({ x: -1000, y: -1000 });
@@ -33,7 +36,13 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const sectionIds = ['about', 'experience', 'skills', 'projects', 'github', 'publications'];
+  const sectionIds = useMemo(() => {
+    const ids = ['about', 'experience', 'skills', 'projects', 'education'];
+    if (SHOW_GITHUB_ACTIVITY) ids.push('github');
+    ids.push('publications');
+    return ids;
+  }, []);
+
   const activeSection = useScrollSpy(sectionIds);
 
   const toggleAIChat = useCallback(() => {
@@ -66,7 +75,10 @@ const App: React.FC = () => {
           <AnimatedSection><Experience /></AnimatedSection>
           <AnimatedSection><Skills /></AnimatedSection>
           <AnimatedSection><Projects /></AnimatedSection>
-          <AnimatedSection><GitHubActivity /></AnimatedSection>
+          <AnimatedSection><EducationAndCertifications /></AnimatedSection>
+          {SHOW_GITHUB_ACTIVITY && (
+            <AnimatedSection><GitHubActivity /></AnimatedSection>
+          )}
           <AnimatedSection><Publications /></AnimatedSection>
         </main>
         <Footer />

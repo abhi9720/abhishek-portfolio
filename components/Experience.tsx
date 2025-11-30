@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { EXPERIENCES, EDUCATION } from '../constants';
+import { EXPERIENCES } from '../constants';
 import { IconMapPin } from './icons/IconMapPin';
+import SystemDesignGallery from './SystemDesignGallery';
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
     <div className="sticky top-0 z-10 py-4 mb-8 bg-slate-50/75 dark:bg-slate-900/75 backdrop-blur lg:hidden">
@@ -101,46 +102,6 @@ const JobCard: React.FC<{ exp: typeof EXPERIENCES[0] }> = ({ exp }) => (
     </div>
 );
 
-const EducationCard: React.FC = () => (
-    <div className="mt-16 group relative">
-        <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl opacity-10 group-hover:opacity-20 blur transition duration-500"></div>
-        <div className="relative p-8 bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-xl text-slate-900 dark:text-slate-100">{EDUCATION.institution}</h4>
-                        <p className="text-blue-600 dark:text-blue-400 font-medium">{EDUCATION.degree}</p>
-                    </div>
-                </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{EDUCATION.period}</span>
-                    <span className="mt-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-bold rounded-full">
-                        {EDUCATION.cgpa}
-                    </span>
-                </div>
-            </div>
-
-            <div className="pt-6 border-t border-slate-100 dark:border-slate-700/50">
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4">Core Curriculum</p>
-                <div className="flex flex-wrap gap-2">
-                    {EDUCATION.coursework.map(course => (
-                        <span key={course} className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600/50 hover:border-blue-300 dark:hover:border-blue-700 transition-colors cursor-default">
-                            {course}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
 const Experience: React.FC = () => {
     return (
         <section id="experience" className="scroll-mt-20">
@@ -157,13 +118,7 @@ const Experience: React.FC = () => {
                         ))}
                     </div>
 
-                    <div className="mt-8 flex items-center gap-4">
-                        <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></div>
-                        <span className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Academic Background</span>
-                        <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></div>
-                    </div>
-
-                    <EducationCard />
+                    <SystemDesignGallery />
                 </div>
             </div>
         </section>

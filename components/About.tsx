@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { PERSONAL_INFO } from '../constants';
 import KeyHighlights from './KeyHighlights';
-import SystemDesignGallery from './SystemDesignGallery';
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
     <div className="sticky top-0 z-10 py-4 bg-slate-50/75 dark:bg-slate-900/75 backdrop-blur lg:hidden">
@@ -24,7 +24,6 @@ const About: React.FC = () => {
                         </p>
                     </div>
                     <KeyHighlights />
-                    <SystemDesignGallery />
                 </div>
             </div>
         </section>

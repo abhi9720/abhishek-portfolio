@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Radar,
@@ -16,15 +17,17 @@ interface TechRadarProps {
 
 const data = [
   { subject: 'Java', A: 90, fullMark: 100 },
-  { subject: 'Go', A: 85, fullMark: 100 },
   { subject: 'Spring Boot', A: 95, fullMark: 100 },
+  { subject: 'Go', A: 85, fullMark: 100 },
+  { subject: 'Python', A: 90, fullMark: 100 },
+  { subject: 'FastAPI', A: 85, fullMark: 100 },
+  { subject: 'GenAI', A: 85, fullMark: 100 },
+  { subject: 'Sys Design (LLD + HLD)', A: 85, fullMark: 100 },
+  { subject: 'Node.js', A: 70, fullMark: 100 },
   { subject: 'Kafka', A: 80, fullMark: 100 },
   { subject: 'Redis', A: 85, fullMark: 100 },
   { subject: 'MySQL', A: 85, fullMark: 100 },
   { subject: 'AWS', A: 75, fullMark: 100 },
-  { subject: 'Sys Design', A: 85, fullMark: 100 },
-  { subject: 'LLD', A: 80, fullMark: 100 },
-  { subject: 'HLD', A: 75, fullMark: 100 },
 ];
 
 const getProficiencyLabel = (value: number) => {
@@ -60,7 +63,7 @@ const TechRadar: React.FC<TechRadarProps> = ({ compact = false }) => {
   const fillColor = '#3b82f6'; // blue-500
 
   // Responsive settings based on 'compact' prop
-  const fontSize = compact ? 9 : 13;
+  const fontSize = compact ? 9 : 11; // Slightly reduced font size to accommodate more items
   const outerRadius = compact ? "60%" : "70%";
   
   // Format labels for compact mode to save space
@@ -68,15 +71,17 @@ const TechRadar: React.FC<TechRadarProps> = ({ compact = false }) => {
       if (!compact) return label;
       const map: Record<string, string> = {
           'Spring Boot': 'Spring',
-          'Sys Design': 'System',
+          'Sys Design (LLD + HLD)': 'Sys Design',
           'MySQL': 'SQL',
           'Java': 'Java',
           'Go': 'Go',
           'Kafka': 'Kafka',
           'Redis': 'Redis',
           'AWS': 'AWS',
-          'LLD': 'LLD',
-          'HLD': 'HLD'
+          'Node.js': 'Node',
+          'GenAI': 'GenAI',
+          'Python': 'Python',
+          'FastAPI': 'FastAPI'
       };
       return map[label] || label;
   };

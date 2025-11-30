@@ -58,3 +58,12 @@ export interface ChatMessage {
     sender: 'user' | 'ai';
     text: string;
 }
+
+export interface Certification {
+  name: string;
+  issuer: string;
+  date: string;
+  link: string;
+  credentialId?: string;
+  logo: string;
+}

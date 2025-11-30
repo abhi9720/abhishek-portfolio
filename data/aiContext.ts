@@ -8,7 +8,8 @@ import {
   PROJECTS,
   SKILLS,
   CURRENT_INTERESTS,
-  EDUCATION
+  EDUCATION,
+  CERTIFICATIONS
 } from '../constants';
 
 export const GENERATED_AI_CONTEXT = `
@@ -72,6 +73,16 @@ export const GENERATED_AI_CONTEXT = `
     <cgpa>${EDUCATION.cgpa}</cgpa>
     <coursework>${EDUCATION.coursework.join(', ')}</coursework>
   </education>
+
+  <certifications>
+    ${CERTIFICATIONS.map(c => `
+    <certification>
+      <name>${c.name}</name>
+      <issuer>${c.issuer}</issuer>
+      <date>${c.date}</date>
+      <id>${c.credentialId || 'N/A'}</id>
+    </certification>`).join('\n')}
+  </certifications>
 
   <interests>
     ${CURRENT_INTERESTS.map(i => `<interest>${i}</interest>`).join('\n    ')}

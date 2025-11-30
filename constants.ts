@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Experience, Project, SkillCategory, Link, KeyHighlight, CategorizedSkillGroup } from './types';
+import { Experience, Project, SkillCategory, Link, KeyHighlight, CategorizedSkillGroup, Certification } from './types';
 import { IconMail } from './components/icons/IconMail';
 import { IconGitHub } from './components/icons/IconGitHub';
 import { IconLinkedIn } from './components/icons/IconLinkedIn';
@@ -16,13 +17,14 @@ import { IconApi } from './components/icons/IconApi';
 import { IconBrain } from './components/icons/IconBrain';
 import { IconSparkles } from './components/icons/IconSparkles';
 
-// Toggle for Learning & Research Card
+// Configuration Flags
 export const SHOW_LEARNING_AND_RESEARCH = true;
+export const SHOW_GITHUB_ACTIVITY = true;
 
 export const PERSONAL_INFO = {
   name: 'Abhishek “Abhi” Tiwari',
   nickname: 'abhi9720',
-  title: 'Backend-leaning Full-Stack Software Engineer',
+  title: 'SDE-II | Backend Engineer (Java + Go) | Scalable Systems | AI/LLM Engineering',
   location: 'Bangalore / Gwalior, India',
   email: 'abhishek.nitmn@gmail.com',
   phone: '+91-9876543210',
@@ -65,7 +67,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Development Engineer I',
     company: 'PeopleStrong',
-    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf_pPljm7eqKZ63rP3rxtny6lbMAFPSYVi3ci-YMWITCe2g0hKm9H71L8eA7YH4GI9t-U&usqp=CAU',
+    logo: 'https://www.peoplestrong.com/wp-content/uploads/2015/12/ps-logo.svg',
     period: 'Apr 2024 – Present',
     location: 'Bangalore, India',
     description: [
@@ -78,7 +80,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Associate Software Engineer',
     company: 'Imperva',
-    logo: 'https://appsecmap.com/images/d/Imperva.png',
+    logo: 'https://www.imperva.com/wp-content/uploads/2025/08/Imperva-dark.svg',
     period: 'Nov 2023 – Mar 2024',
     location: 'Bangalore, India',
     description: [
@@ -90,7 +92,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Engineer Intern',
     company: 'Nagarro',
-    logo: 'https://companieslogo.com/img/orig/NA9.DE-ebeff140.png?t=1720244493',
+    logo: 'https://www.nagarro.com/hubfs/NagarroWebsiteRedesign-Aug2020/Assets/Images/Nagarro%20green%20logo%20with%20white%20title.svg',
     period: 'Mar 2023 – Nov 2023',
     location: 'Noida, India',
     description: [
@@ -117,7 +119,7 @@ export const PROJECTS: Project[] = [
         title: 'AI Resume Analyzer',
         category: 'AI',
         tech: ['Python', 'LangChain', 'OpenAI', 'VectorDB'],
-        tags: ['#LLM', '#RAG', '#NLP'],
+        tags: ['#LLM', '#RAG',],
         description: 'A smart tool to analyze resumes, extract key info, and score them against job descriptions using modern AI.',
         link: 'https://github.com/abhi9720/ai-resume-analyzer',
         imageUrl: 'https://placehold.co/1280x720/1e293b/f1f5f9/png?text=AI+Analyzer&font=inter',
@@ -133,13 +135,13 @@ export const PROJECTS: Project[] = [
         imageUrl: 'https://placehold.co/1280x720/1e293b/f1f5f9/png?text=CoderTab&font=inter',
     },
     {
-        title: 'Pastebin Clone',
+        title: 'Pastebin',
         category: 'Full-Stack',
         tech: ['Go', 'React', 'PostgreSQL', 'Redis'],
         tags: ['#Full-Stack', '#High-Performance', '#Go'],
         description: 'A modern Pastebin alternative with a high-performance Go backend and a clean React frontend.',
         link: 'https://github.com/abhi9720/pastebin-clone-go-react',
-        imageUrl: 'https://placehold.co/1280x720/1e293b/f1f5f9/png?text=Pastebin+Clone&font=inter'
+        imageUrl: 'https://placehold.co/1280x720/1e293b/f1f5f9/png?text=Pastebin&font=inter'
     },
     {
         title: 'Postgram',
@@ -165,7 +167,7 @@ export const PROJECTS: Project[] = [
 export const SKILLS: SkillCategory[] = [
     { name: 'Languages', skills: ['Java', 'Golang', 'TypeScript', 'JavaScript (ES6)', 'Python'] },
     { name: 'Frontend', skills: ['React.js', 'Angular 10', 'Tailwind CSS', 'HTML', 'CSS', 'EJS'] },
-    { name: 'Backend', skills: ['Spring Boot', 'Hibernate', 'GORM', 'Gin', 'Node.js', 'Express.js'] },
+    { name: 'Backend', skills: ['Spring Boot', 'Hibernate', 'GORM', 'Gin', 'FastAPI', 'Node.js', 'Express.js'] },
     { name: 'Databases', skills: ['MySQL', 'PostgreSQL', 'Redis', 'MongoDB', 'Oracle SQL'] },
     { name: 'Infrastructure', skills: ['AWS (EC2, RDS, S3, VPC, Lambda)', 'Docker'] },
     { name: 'Messaging', skills: ['Apache Kafka', 'Socket.io'] },
@@ -187,12 +189,12 @@ const BASE_CATEGORIES: CategorizedSkillGroup[] = [
     {
         name: 'AI & LLM Engineering',
         icon: React.createElement(IconSparkles, { className: 'h-6 w-6' }),
-        skills: ['LangChain', 'OpenAI API', 'RAG Pipelines', 'Vector Databases', 'Prompt Engineering', 'LLM Orchestration', 'Python'],
+        skills: ['LangChain', 'OpenAI Agent SDK', 'RAG Pipelines', 'Vector Databases', 'Prompt Engineering', 'LLM Orchestration', 'Python'],
     },
     {
         name: 'Core Backend Technologies',
         icon: React.createElement(IconCode, { className: 'h-6 w-6' }),
-        skills: ['Java', 'Spring Boot', 'Golang', 'Gin', 'Node.js', 'Express.js', 'Hibernate', 'GORM', 'Microservices', 'System Design', 'Algorithms'],
+        skills: ['Java', 'Spring Boot', 'Golang', 'Gin', 'FastAPI', 'Node.js', 'Express.js', 'Hibernate', 'GORM', 'Microservices', 'System Design', 'Algorithms'],
     },
     {
         name: 'Data & Storage Systems',
@@ -205,10 +207,7 @@ const BASE_CATEGORIES: CategorizedSkillGroup[] = [
         skills: [
             'AWS (EC2, RDS, S3, VPC)', 
             'Docker', 
-            'Prometheus', 
-            'Bash Scripting',
             'Apache Kafka', 
-            'WebSockets', 
             'Socket.io', 
             'REST APIs', 
             'gRPC', 
@@ -237,3 +236,21 @@ export const EDUCATION = {
   cgpa: '8.8 CGPA',
   coursework: ['Algorithms', 'Databases', 'Operating Systems', 'Computer Networks', 'Machine Learning'],
 };
+
+export const CERTIFICATIONS: Certification[] = [
+    
+    {
+        name: 'Go Design Patterns',
+        issuer: 'LinkedIn Learning',
+        date: 'Issued 2024',
+        link: 'https://www.linkedin.com/learning/certificates/a2a68ce48c6bfcb1d026d6520489947e5090d40bef43a5f236273a283732aaba',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png'
+    },
+    {
+        name: 'Go Essentials: Concurrency, Connectivity, and High-Performance Apps',
+        issuer: 'LinkedIn Learning',
+        date: 'Issued 2024',
+        link: 'https://www.linkedin.com/learning/certificates/197ad5e18a4689e92958c06011c00ddbb71e3de21b731b277864fb637696791f?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BLccALGFBQ%2Fy9Vww%2BMuP4Jw%3D%3D',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png'
+    }
+];

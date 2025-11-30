@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Article } from '../types';
-import { IconMedium } from './icons/IconMedium';
-import { IconDevTo } from './icons/IconDevTo';
+import { IconChevronLeft } from './icons/IconChevronLeft';
+import { IconChevronRight } from './icons/IconChevronRight';
 import PublicationSkeleton from './PublicationSkeleton';
 import { PERSONAL_INFO } from '../constants';
-import { IconChevronDown } from './icons/IconChevronDown';
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
     <div className="sticky top-0 z-10 py-4 mb-4 bg-slate-50/75 dark:bg-slate-900/75 backdrop-blur lg:static lg:mb-0 lg:py-0 lg:bg-transparent">
@@ -13,7 +12,7 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
     </div>
 );
 
-const getSnippet = (html: string, maxLength: number = 120): string => {
+const getSnippet = (html: string, maxLength: number = 100): string => {
     if (typeof document === 'undefined') {
         const text = html.replace(/<[^>]*>/g, '');
         return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -24,7 +23,6 @@ const getSnippet = (html: string, maxLength: number = 120): string => {
     return text.slice(0, maxLength).trim() + '...';
 };
 
-// Helper function to extract the first image URL from HTML content
 const extractImageFromHtml = (html: string): string | null => {
     if (typeof document === 'undefined') return null;
     try {
@@ -37,40 +35,56 @@ const extractImageFromHtml = (html: string): string | null => {
 };
 
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
+    const isMedium = article.platform === 'Medium';
+    
     return (
         <a 
             href={article.link} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="group flex flex-col sm:flex-row gap-6 p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-all duration-300"
+            className="group relative flex flex-col flex-shrink-0 w-[280px] sm:w-[320px] h-[400px] rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 overflow-hidden shadow-subtle hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 snap-center"
         >
-            <div className="w-full sm:w-48 md:w-64 flex-shrink-0 aspect-video sm:aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-900 relative">
-                 <img 
+            {/* Image Section */}
+            <div className="h-44 w-full overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                <img 
                     src={article.thumbnail || `https://placehold.co/600x400/e2e8f0/64748b?text=${article.platform}`} 
                     alt={article.title}
-                    className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                     onError={(e) => {
-                        // Fallback if the extracted image URL fails to load
                         (e.target as HTMLImageElement).src = `https://placehold.co/600x400/e2e8f0/64748b?text=${article.platform}`;
                     }}
                 />
             </div>
-            <div className="flex flex-col justify-center flex-grow py-1">
-                <div className="flex items-center gap-2 mb-3">
-                    {article.platform === 'Medium' ? <IconMedium className="h-5 w-5 text-slate-500" /> : <IconDevTo className="h-5 w-5 text-slate-500" />}
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{article.platform}</span>
-                     <span className="text-slate-300 dark:text-slate-600">•</span>
-                     <span className="text-xs text-slate-500">{new Date(article.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+
+            {/* Content Section */}
+            <div className="flex flex-col flex-1 p-5">
+                {/* Platform Tag & Date */}
+                <div className="flex items-center gap-3 mb-3">
+                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                        isMedium 
+                        ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900' 
+                        : 'bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600'
+                     }`}>
+                        {article.platform}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        {new Date(article.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-tight line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {article.title}
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                
+                <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">
                     {article.description}
                 </p>
-                <div className="mt-auto flex items-center text-blue-600 dark:text-blue-400 font-bold group/link">
-                     <span className="border-b-2 border-transparent group-hover/link:border-blue-600 dark:group-hover/link:border-blue-400 transition-colors">Read the blog</span>
+
+                <div className="mt-auto flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                    Read Article 
+                    <svg className="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </div>
             </div>
         </a>
@@ -79,9 +93,9 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
 
 const Publications: React.FC = () => {
     const [articles, setArticles] = useState<Article[]>([]);
+    const [filter, setFilter] = useState<'All' | 'Medium' | 'DEV.to'>('All');
     const [status, setStatus] = useState<'loading' | 'succeeded' | 'failed'>('loading');
-    const [activeTab, setActiveTab] = useState('Medium');
-    const [visibleCount, setVisibleCount] = useState(4);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -97,20 +111,16 @@ const Publications: React.FC = () => {
 
                 const fetchedArticles: Article[] = [];
 
-                // Process Medium feed
+                // Process Medium
                 const mediumResponse = responses[0];
                 if (mediumResponse.status === 'fulfilled' && mediumResponse.value.ok) {
                     const mediumData = await mediumResponse.value.json();
                     if (mediumData.status === 'ok' && Array.isArray(mediumData.items)) {
                         const mediumArticles: Article[] = mediumData.items.map((item: any) => {
-                            // Medium often puts the main image in the content/description if thumbnail is empty
-                            // The api.rss2json might put it in thumbnail, but sometimes it doesn't.
-                            // We check item.thumbnail, then try to parse item.content, then item.description.
                             let thumbnail = item.thumbnail;
                             if (!thumbnail || thumbnail.trim() === '') {
                                 thumbnail = extractImageFromHtml(item.content) || extractImageFromHtml(item.description) || '';
                             }
-                            
                             return {
                                 title: item.title,
                                 link: item.link,
@@ -124,7 +134,7 @@ const Publications: React.FC = () => {
                     }
                 }
 
-                // Process DEV.to feed
+                // Process DEV.to
                 const devToResponse = responses[1];
                 if (devToResponse.status === 'fulfilled' && devToResponse.value.ok) {
                     const devToData = await devToResponse.value.json();
@@ -150,7 +160,7 @@ const Publications: React.FC = () => {
                 }
 
             } catch (error) {
-                console.error("An unexpected error occurred while fetching articles:", error);
+                console.error("Error fetching articles:", error);
                 setStatus('failed');
             }
         };
@@ -159,14 +169,20 @@ const Publications: React.FC = () => {
     }, []);
 
     const filteredArticles = useMemo(() => {
-        return articles.filter(article => article.platform === activeTab);
-    }, [articles, activeTab]);
+        if (filter === 'All') return articles;
+        return articles.filter(article => article.platform === filter);
+    }, [articles, filter]);
 
-    const tabs = ['Medium', 'DEV.to'];
-
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-        setVisibleCount(4);
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const container = scrollContainerRef.current;
+            const scrollAmount = 340; // Card width + gap
+            const targetScroll = container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+            container.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+        }
     };
 
     return (
@@ -176,22 +192,49 @@ const Publications: React.FC = () => {
                     <h2 className="sticky top-0 hidden lg:block py-4 text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-slate-900 to-blue-500 dark:from-slate-200 dark:to-blue-500 text-transparent bg-clip-text">Writing</h2>
                 </div>
                 <div className="lg:col-span-3">
-                    <SectionHeader title="Writing" />
-
-                    <div className="mb-8">
-                        <div className="bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl inline-flex items-center">
-                            {tabs.map(tab => (
-                                <button
-                                    key={tab}
-                                    onClick={() => handleTabChange(tab)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${activeTab === tab ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/5' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-700/50 hover:scale-105'}`}
-                                >
-                                    {tab}
-                                </button>
-                            ))}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                            <SectionHeader title="Writing" />
+                            
+                            {/* Filter Pills */}
+                            <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/60 rounded-lg">
+                                {['All', 'Medium', 'DEV.to'].map((f) => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFilter(f as any)}
+                                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all duration-300 ${
+                                            filter === f 
+                                            ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm' 
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                        }`}
+                                    >
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+                        
+                        {/* Navigation Controls */}
+                        {status === 'succeeded' && (
+                            <div className="hidden sm:flex items-center gap-2">
+                                <button 
+                                    onClick={() => scroll('left')}
+                                    className="p-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                                    aria-label="Scroll left"
+                                >
+                                    <IconChevronLeft className="h-5 w-5" />
+                                </button>
+                                <button 
+                                    onClick={() => scroll('right')}
+                                    className="p-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
+                                    aria-label="Scroll right"
+                                >
+                                    <IconChevronRight className="h-5 w-5" />
+                                </button>
+                            </div>
+                        )}
                     </div>
-                    
+
                     {status === 'loading' && <PublicationSkeleton />}
                     
                     {status === 'failed' && (
@@ -202,28 +245,30 @@ const Publications: React.FC = () => {
                     )}
 
                     {status === 'succeeded' && (
-                        <div className="flex flex-col gap-6">
-                            {filteredArticles.slice(0, visibleCount).map((article) => (
-                                <ArticleCard key={article.link} article={article} />
-                            ))}
+                        <div className="relative group/carousel">
+                            {/* Horizontal Scroll Container */}
+                            <div 
+                                ref={scrollContainerRef}
+                                className="flex gap-6 overflow-x-auto pb-8 pt-2 px-1 snap-x snap-mandatory scroll-smooth no-scrollbar"
+                                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                            >
+                                {filteredArticles.length > 0 ? (
+                                    filteredArticles.map((article, index) => (
+                                        <ArticleCard key={`${article.link}-${index}`} article={article} />
+                                    ))
+                                ) : (
+                                    <div className="w-full py-12 text-center text-slate-500 dark:text-slate-400 italic">
+                                        No articles found for {filter}
+                                    </div>
+                                )}
+                                
+                                {/* End Spacer */}
+                                {filteredArticles.length > 0 && <div className="w-1 flex-shrink-0"></div>}
+                            </div>
                             
-                            {filteredArticles.length === 0 && (
-                                <div className="text-center py-12 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
-                                    <p className="font-semibold text-lg">No articles found for {activeTab}</p>
-                                </div>
-                            )}
-
-                             {visibleCount < filteredArticles.length && (
-                                <div className="text-center mt-4">
-                                    <button 
-                                        onClick={() => setVisibleCount(prev => prev + 4)}
-                                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 transform hover:scale-105"
-                                    >
-                                        <span>Show More</span>
-                                        <IconChevronDown className="h-4 w-4" />
-                                    </button>
-                                </div>
-                            )}
+                            {/* Fade Gradients for visual cue */}
+                            <div className="absolute top-0 bottom-8 left-0 w-8 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent pointer-events-none lg:hidden"></div>
+                            <div className="absolute top-0 bottom-8 right-0 w-8 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent pointer-events-none lg:hidden"></div>
                         </div>
                     )}
                 </div>

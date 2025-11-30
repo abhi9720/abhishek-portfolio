@@ -40,6 +40,7 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScre
     const [contextKeyword, setContextKeyword] = useState<string>(''); // For Right Panel switching
     const [showInfoPanel, setShowInfoPanel] = useState(true);
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Initial greeting based on time of day
     const getGreeting = () => {
@@ -139,6 +140,16 @@ ${GENERATED_AI_CONTEXT}`;
             });
         }
     }, [messages, isLoading]);
+
+    // Focus input on open
+    useEffect(() => {
+        if (isOpen) {
+            const timer = setTimeout(() => {
+                inputRef.current?.focus();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
 
     const handleSendMessage = async (text: string) => {
         if (!text.trim() || isLoading || !chat) return;
@@ -325,6 +336,7 @@ ${GENERATED_AI_CONTEXT}`;
                         <QuickSuggestions onSelect={handleSendMessage} />
                         <form onSubmit={handleFormSubmit} className="relative mt-2 flex items-center gap-2">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 value={userInput}
                                 onChange={(e) => setUserInput(e.target.value)}

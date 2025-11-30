@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { PERSONAL_INFO, SOCIAL_LINKS } from '../constants';
+import { PERSONAL_INFO, SOCIAL_LINKS, SHOW_GITHUB_ACTIVITY } from '../constants';
 import { IconMapPin } from './icons/IconMapPin';
 import { IconDownload } from './icons/IconDownload';
 import { IconMail } from './icons/IconMail';
@@ -21,7 +21,8 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
         { name: 'Experience', href: '#experience', id: 'experience' },
         { name: 'Skills', href: '#skills', id: 'skills' },
         { name: 'Projects', href: '#projects', id: 'projects' },
-        { name: 'Activity', href: '#github', id: 'github' },
+        { name: 'Education', href: '#education', id: 'education' },
+        ...(SHOW_GITHUB_ACTIVITY ? [{ name: 'Activity', href: '#github', id: 'github' }] : []),
         { name: 'Writing', href: '#publications', id: 'publications' },
     ];
 
@@ -48,8 +49,20 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                                 <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mt-2">
                                     {PERSONAL_INFO.title}
                                 </h2>
-                                <p className="mt-3 text-lg text-slate-600 dark:text-slate-400 font-medium max-w-2xl leading-relaxed">
-                                    Specializing in <span className="text-blue-600 dark:text-blue-400">high-load microservices</span>, real-time pipelines, and <span className="text-blue-600 dark:text-blue-400">LLM-powered</span> backend systems.
+
+                                {/* Open to Work Indicator */}
+                                <div className="inline-flex items-center gap-2.5 mt-4 px-4 py-1.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-full transition-transform hover:scale-105 cursor-default w-fit">
+                                    <span className="relative flex h-2.5 w-2.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                    </span>
+                                    <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                                        Open to SDE II roles | Software & AI Engineering
+                                    </span>
+                                </div>
+
+                                <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 font-medium max-w-2xl leading-relaxed">
+                                    I design and ship <span className="text-blue-600 dark:text-blue-400">high-performance backend systems</span> powering <span className="text-blue-600 dark:text-blue-400">100K+ daily users</span>.
                                 </p>
                             </div>
 
