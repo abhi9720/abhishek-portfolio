@@ -67,7 +67,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Development Engineer I',
     company: 'PeopleStrong',
-    logo: 'https://www.peoplestrong.com/wp-content/uploads/2015/12/ps-logo.svg',
+    logo: 'https://images.g2crowd.com/uploads/product/hd_favicon/ab66b1e4377e0bcf02fee7845cad0216/peoplestrong-technologies-pvt-ltd-peoplestrong.svg',
     period: 'Apr 2024 – Present',
     location: 'Bangalore, India',
     description: [
@@ -92,7 +92,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Engineer Intern',
     company: 'Nagarro',
-    logo: 'https://www.nagarro.com/hubfs/NagarroWebsiteRedesign-Aug2020/Assets/Images/Nagarro%20green%20logo%20with%20white%20title.svg',
+    logo: 'https://companieslogo.com/img/orig/NA9.DE-ebeff140.png?t=1720244493',
     period: 'Mar 2023 – Nov 2023',
     location: 'Noida, India',
     description: [
