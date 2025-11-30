@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SKILL_CATEGORIES } from '../constants';
 import TechRadar from './TechRadar';
@@ -34,25 +35,25 @@ const Skills: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="columns-1 md:columns-2 gap-8 space-y-8">
+                    <div className="columns-1 md:columns-2 gap-4 space-y-4">
                         {SKILL_CATEGORIES.map((category) => (
                             <div 
                                 key={category.name} 
-                                className="break-inside-avoid bg-white dark:bg-slate-800/40 rounded-3xl border border-slate-200 dark:border-slate-700/60 p-8 hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-900/10 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 group hover:-translate-y-1"
+                                className="break-inside-avoid bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700/60 p-5 hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-900/10 hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300 group hover:-translate-y-1"
                             >
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="h-10 w-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
                                         {category.icon}
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                         {category.name}
                                     </h3>
                                 </div>
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-2">
                                     {category.skills.map((skill) => (
                                         <div 
                                             key={skill} 
-                                            className="px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 text-slate-600 dark:text-slate-400 font-medium text-sm transition-all duration-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600 cursor-default shadow-sm"
+                                            className="px-3 py-1 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 text-slate-600 dark:text-slate-400 font-medium text-xs transition-all duration-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600 cursor-default shadow-sm"
                                         >
                                             {skill}
                                         </div>
