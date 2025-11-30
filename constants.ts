@@ -19,7 +19,7 @@ import { IconSparkles } from './components/icons/IconSparkles';
 
 // Configuration Flags
 export const SHOW_LEARNING_AND_RESEARCH = true;
-export const SHOW_GITHUB_ACTIVITY = true;
+export const SHOW_GITHUB_ACTIVITY = false;
 
 export const PERSONAL_INFO = {
   name: 'Abhishek “Abhi” Tiwari',
@@ -105,6 +105,15 @@ export const EXPERIENCES: Experience[] = [
 ];
 
 export const PROJECTS: Project[] = [
+    {
+        title: 'Smart Classification Engine',
+        category: 'AI',
+        tech: ['Python', 'GTE-Large Embeddings', 'LightGBM', 'LLM', 'AsyncIO', 'Batch Processing', 'Parallelization'],
+        tags: ['#NLP', '#Embeddings', '#HighScale', '#LLM', '#AsyncIO', '#Classification'],
+        description: 'A highly efficient, centralized classification engine that processes millions of messages per second, classifying them as relevant or irrelevant while capturing nuanced information such as sentiment, appreciation, criticism, and actionable insights. Built with Python, it uses semantic embeddings with LightGBM for primary classification, applies score thresholds, and leverages LLM fallback for ambiguous cases. Supports batch processing, async concurrency, and parallelization for fast, private, and scalable deployment.',
+        link: 'https://github.com/abhi9720/smart-classification-engine',
+        imageUrl: 'https://placehold.co/1280x720/1e293b/f1f5f9/png?text=Classification+Engine&font=inter'
+    },
     {
         title: 'BankingPortal-API',
         category: 'Backend',
