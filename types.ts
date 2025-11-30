@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export interface Link {
@@ -9,6 +10,7 @@ export interface Link {
 export interface Experience {
   role: string;
   company: string;
+  logo: string;
   period: string;
   location: string;
   description: string[];

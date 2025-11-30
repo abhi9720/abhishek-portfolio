@@ -56,16 +56,27 @@ const JobCard: React.FC<{ exp: typeof EXPERIENCES[0] }> = ({ exp }) => (
                 {/* Decorative top accent */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                <div className="flex justify-between items-start mb-2">
-                    <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {exp.company}
-                        </h3>
-                        <div className="text-base font-semibold text-slate-700 dark:text-slate-300 mt-0.5">
-                            {exp.role}
+                <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-4">
+                        {/* Company Logo */}
+                        <div className="h-12 w-12 rounded-xl bg-white p-1.5 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 overflow-hidden">
+                            <img 
+                                src={exp.logo} 
+                                alt={`${exp.company} logo`} 
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                            />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {exp.company}
+                            </h3>
+                            <div className="text-base font-semibold text-slate-700 dark:text-slate-300 mt-0.5">
+                                {exp.role}
+                            </div>
                         </div>
                     </div>
-                     <div className="hidden sm:flex items-center text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-3 py-1 rounded-full">
+                     <div className="hidden sm:flex items-center text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-3 py-1 rounded-full shrink-0">
                         <IconMapPin className="w-3 h-3 mr-1.5" />
                         {exp.location}
                     </div>

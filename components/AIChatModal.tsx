@@ -9,7 +9,8 @@ import { IconSend } from './icons/IconSend';
 import { IconDownload } from './icons/IconDownload';
 import IconSpinner from './icons/IconSpinner';
 import { ChatMessage } from '../types';
-import { AI_CONTEXT_DOCUMENT, PERSONAL_INFO } from '../constants';
+import { PERSONAL_INFO } from '../constants';
+import { GENERATED_AI_CONTEXT } from '../data/aiContext';
 import TypingIndicator from './TypingIndicator';
 import MarkdownRenderer from './MarkdownRenderer';
 import { IconMaximize } from './icons/IconMaximize';
@@ -18,6 +19,7 @@ import { IconRobot } from './icons/IconRobot';
 import { IconSidebar } from './icons/IconSidebar';
 import QuickSuggestions from './QuickSuggestions';
 import ChatInfoPanel from './ChatInfoPanel';
+import { useModalFocus } from '../hooks/useModalFocus';
 
 interface AIChatWindowProps {
   isOpen: boolean;
@@ -29,6 +31,7 @@ interface AIChatWindowProps {
 const CHAT_HISTORY_KEY = 'ai_chat_history';
 
 const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScreen, setIsFullScreen }) => {
+    const modalRef = useModalFocus(isOpen, onClose);
     const [chat, setChat] = useState<Chat | null>(null);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +44,9 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScre
     // Initial greeting based on time of day
     const getGreeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return "Good morning!";
-        if (hour < 18) return "Good afternoon!";
-        return "Good evening!";
+        if (hour < 12) return "Good morning.";
+        if (hour < 18) return "Good afternoon.";
+        return "Good evening.";
     };
 
     const [messages, setMessages] = useState<ChatMessage[]>(() => {
@@ -61,7 +64,7 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScre
         }
         return [{ 
             sender: 'ai', 
-            text: `${getGreeting()} I'm Abhishek's AI Career Assistant.\n\nI can analyze his **projects**, detail his **backend expertise**, or summarize his **achievements** at PeopleStrong & Imperva.\n\nHow can I help you hire him today?` 
+            text: `${getGreeting()} I am Abhishek's AI Career Assistant.\n\nI can provide details on his **backend expertise**, **microservices architecture**, or **leadership at PeopleStrong**. How may I assist you?` 
         }];
     });
 
@@ -69,27 +72,21 @@ const AIChatWindow: React.FC<AIChatWindowProps> = ({ isOpen, onClose, isFullScre
 
     useEffect(() => {
         const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        const systemInstruction = `You are the AI Career Assistant for Abhishek Tiwari, a high-performing Backend-leaning Full-Stack Engineer. The current date is ${today}.
+        const systemInstruction = `You are the AI Career Assistant for Abhishek Tiwari, a Backend-leaning Full-Stack Engineer. The current date is ${today}.
 
 **CORE PERSONA:**
-- You are professional, confident, and results-oriented.
-- You speak in the first person ("I") as if you are Abhishek's digital twin.
-- You emphasize **metrics** (e.g., "100K+ req/day", "35% latency drop") whenever possible.
-- You are tech-savvy. You know the nuances between "Monolith" vs "Microservices" and "SQL" vs "NoSQL".
+- **Tone:** Formal, professional, and direct.
+- **Identity:** Speak in the first person ("I") as Abhishek.
+- **Style:** Concise. Avoid conversational fillers (e.g., "Thank you for asking", "Here is the information"). Provide the answer immediately.
 
-**RESPONSE RULES:**
-1.  **Be Concise:** Recruiters are busy. Get to the point.
-2.  **Structure:** Use bolding for key technologies and metrics. Use short bullet points for lists.
-3.  **Context:** Use the provided context document strictly. If asked about something not in the doc (like "Do you know Rust?"), pivot: "I haven't used Rust professionally, but my strong foundation in Go makes me confident I can pick it up quickly."
-4.  **Formatting:** Use Markdown. Links must be formatted as [Link Text](URL).
+**RESPONSE PROTOCOL:**
+1.  **Technical Inquiries:** MUST use **bullet points** to structure the response.
+2.  **Metrics:** Highlight key numbers using **bold text** (e.g., "**100K+ req/day**", "**35% latency reduction**").
+3.  **Context:** STRICTLY rely on the "Context Document" below. If a specific skill or project is not found, state clearly that it is not in your professional history, then pivot to relevant existing skills.
+4.  **Formatting:** Use Markdown.
 
-**KEY THEMES TO HIGHLIGHT:**
-- **High-Scale Systems:** PeopleStrong (100K+ req/day), Kafka pipelines.
-- **Distributed Systems:** Async task queues, Redis streams, Gamification engines.
-- **AI/LLM:** RAG pipelines, LangChain, Vector DBs.
-
-**CONTEXT DOCUMENT:**
-${AI_CONTEXT_DOCUMENT}`;
+**KNOWLEDGE BASE (Context Document):**
+${GENERATED_AI_CONTEXT}`;
 
         const historyForGemini = messages
             .filter(msg => (messages.length > 1) || (msg.sender === 'user'))
@@ -228,10 +225,13 @@ ${AI_CONTEXT_DOCUMENT}`;
 
     return (
         <div
+            ref={modalRef}
             className={containerClasses}
             role="dialog"
-            aria-modal="false"
+            aria-modal="true"
             aria-hidden={!isOpen}
+            tabIndex={-1}
+            outline-none
         >
             <div className={`bg-white dark:bg-slate-900 shadow-2xl flex border border-slate-200 dark:border-slate-700 relative overflow-hidden ${modalHeightClass}`}>
                 
@@ -249,10 +249,10 @@ ${AI_CONTEXT_DOCUMENT}`;
                             </div>
                             <div>
                                 <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 leading-none">
-                                    AI Career Assistant
+                                    Abhishek’s AI Career Assistant
                                 </h2>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                                    Powered by Gemini 2.0 • Online
+                                    Powered by Cutting-Edge AI • Always Available
                                 </p>
                             </div>
                         </div>
@@ -335,7 +335,7 @@ ${AI_CONTEXT_DOCUMENT}`;
                             <button 
                                 type="submit" 
                                 disabled={isLoading || !userInput.trim()}
-                                className="absolute right-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-md"
+                                className="absolute right-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 transition-all shadow-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
                             >
                                 <IconSend className="h-5 w-5" />
                             </button>

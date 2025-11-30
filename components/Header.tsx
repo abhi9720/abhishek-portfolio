@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PERSONAL_INFO, SOCIAL_LINKS } from '../constants';
 import { IconMapPin } from './icons/IconMapPin';
@@ -18,9 +19,9 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
     const navLinks = [
         { name: 'About', href: '#about', id: 'about' },
         { name: 'Experience', href: '#experience', id: 'experience' },
+        { name: 'Skills', href: '#skills', id: 'skills' },
         { name: 'Projects', href: '#projects', id: 'projects' },
         { name: 'Activity', href: '#github', id: 'github' },
-        { name: 'Skills', href: '#skills', id: 'skills' },
         { name: 'Writing', href: '#publications', id: 'publications' },
     ];
 
@@ -61,10 +62,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
                                 <button
                                     onClick={() => setIsContactModalOpen(true)}
                                     className="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-blue-600 rounded-full hover:bg-blue-500 transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform hover:-translate-y-1"
-                                    aria-label="Contact Me"
+                                    aria-label="Hire Me"
                                 >
                                     <IconMail className="h-4 w-4" />
-                                    <span>Contact Me</span>
+                                    <span>Hire Me</span>
                                 </button>
                                 <button
                                     onClick={() => setIsResumeModalOpen(true)}

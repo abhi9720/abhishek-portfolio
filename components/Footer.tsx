@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={link.name}
-                        className="text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-300 transform hover:-translate-y-1 inline-block"
+                        className="text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-300 transform hover:scale-110 inline-block"
                     >
                         <span className="sr-only">{link.name}</span>
                         {link.icon}

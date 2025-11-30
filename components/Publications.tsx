@@ -24,6 +24,18 @@ const getSnippet = (html: string, maxLength: number = 120): string => {
     return text.slice(0, maxLength).trim() + '...';
 };
 
+// Helper function to extract the first image URL from HTML content
+const extractImageFromHtml = (html: string): string | null => {
+    if (typeof document === 'undefined') return null;
+    try {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const img = doc.querySelector('img');
+        return img ? img.getAttribute('src') : null;
+    } catch (e) {
+        return null;
+    }
+};
+
 const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
     return (
         <a 
@@ -38,6 +50,10 @@ const ArticleCard: React.FC<{ article: Article }> = ({ article }) => {
                     alt={article.title}
                     className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                        // Fallback if the extracted image URL fails to load
+                        (e.target as HTMLImageElement).src = `https://placehold.co/600x400/e2e8f0/64748b?text=${article.platform}`;
+                    }}
                 />
             </div>
             <div className="flex flex-col justify-center flex-grow py-1">
@@ -86,14 +102,24 @@ const Publications: React.FC = () => {
                 if (mediumResponse.status === 'fulfilled' && mediumResponse.value.ok) {
                     const mediumData = await mediumResponse.value.json();
                     if (mediumData.status === 'ok' && Array.isArray(mediumData.items)) {
-                        const mediumArticles: Article[] = mediumData.items.map((item: any) => ({
-                            title: item.title,
-                            link: item.link,
-                            pubDate: item.pubDate,
-                            description: getSnippet(item.content),
-                            platform: 'Medium',
-                            thumbnail: item.thumbnail,
-                        }));
+                        const mediumArticles: Article[] = mediumData.items.map((item: any) => {
+                            // Medium often puts the main image in the content/description if thumbnail is empty
+                            // The api.rss2json might put it in thumbnail, but sometimes it doesn't.
+                            // We check item.thumbnail, then try to parse item.content, then item.description.
+                            let thumbnail = item.thumbnail;
+                            if (!thumbnail || thumbnail.trim() === '') {
+                                thumbnail = extractImageFromHtml(item.content) || extractImageFromHtml(item.description) || '';
+                            }
+                            
+                            return {
+                                title: item.title,
+                                link: item.link,
+                                pubDate: item.pubDate,
+                                description: getSnippet(item.content),
+                                platform: 'Medium',
+                                thumbnail: thumbnail,
+                            };
+                        });
                         fetchedArticles.push(...mediumArticles);
                     }
                 }

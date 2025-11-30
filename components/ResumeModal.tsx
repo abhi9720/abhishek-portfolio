@@ -1,8 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { IconDownload } from './icons/IconDownload';
 import { IconX } from './icons/IconX';
 import { RESUME_LINK } from '../constants';
+import { useModalFocus } from '../hooks/useModalFocus';
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -10,18 +11,7 @@ interface ResumeModalProps {
 }
 
 const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [onClose]);
+  const modalRef = useModalFocus(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -35,8 +25,10 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
       aria-labelledby="resume-modal-title"
     >
       <div
-        className="bg-slate-50 dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col p-4 md:p-6 border border-slate-200 dark:border-slate-700 relative"
+        ref={modalRef}
+        className="bg-slate-50 dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col p-4 md:p-6 border border-slate-200 dark:border-slate-700 relative outline-none"
         onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
       >
         <div className="flex justify-between items-center mb-4 flex-shrink-0">
           <h2 id="resume-modal-title" className="text-xl font-bold text-slate-900 dark:text-slate-200">Resume Preview</h2>
@@ -46,14 +38,14 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
               download="Abhishek_Tiwari_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
             >
               <IconDownload className="h-4 w-4" />
               Download
             </a>
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors focus:ring-2 focus:ring-slate-400 focus:outline-none"
               aria-label="Close"
             >
               <IconX className="h-6 w-6" />

@@ -33,7 +33,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const sectionIds = ['about', 'experience', 'projects', 'github', 'skills', 'publications'];
+  const sectionIds = ['about', 'experience', 'skills', 'projects', 'github', 'publications'];
   const activeSection = useScrollSpy(sectionIds);
 
   const toggleAIChat = useCallback(() => {
@@ -64,9 +64,9 @@ const App: React.FC = () => {
         <main className="space-y-32 pb-32">
           <AnimatedSection><About /></AnimatedSection>
           <AnimatedSection><Experience /></AnimatedSection>
+          <AnimatedSection><Skills /></AnimatedSection>
           <AnimatedSection><Projects /></AnimatedSection>
           <AnimatedSection><GitHubActivity /></AnimatedSection>
-          <AnimatedSection><Skills /></AnimatedSection>
           <AnimatedSection><Publications /></AnimatedSection>
         </main>
         <Footer />

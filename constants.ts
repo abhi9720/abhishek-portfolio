@@ -16,6 +16,9 @@ import { IconApi } from './components/icons/IconApi';
 import { IconBrain } from './components/icons/IconBrain';
 import { IconSparkles } from './components/icons/IconSparkles';
 
+// Toggle for Learning & Research Card
+export const SHOW_LEARNING_AND_RESEARCH = true;
+
 export const PERSONAL_INFO = {
   name: 'Abhishek “Abhi” Tiwari',
   nickname: 'abhi9720',
@@ -62,6 +65,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Development Engineer I',
     company: 'PeopleStrong',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf_pPljm7eqKZ63rP3rxtny6lbMAFPSYVi3ci-YMWITCe2g0hKm9H71L8eA7YH4GI9t-U&usqp=CAU',
     period: 'Apr 2024 – Present',
     location: 'Bangalore, India',
     description: [
@@ -74,6 +78,7 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Associate Software Engineer',
     company: 'Imperva',
+    logo: 'https://appsecmap.com/images/d/Imperva.png',
     period: 'Nov 2023 – Mar 2024',
     location: 'Bangalore, India',
     description: [
@@ -85,8 +90,9 @@ export const EXPERIENCES: Experience[] = [
   {
     role: 'Software Engineer Intern',
     company: 'Nagarro',
+    logo: 'https://companieslogo.com/img/orig/NA9.DE-ebeff140.png?t=1720244493',
     period: 'Mar 2023 – Nov 2023',
-    location: 'Gwalior, India',
+    location: 'Noida, India',
     description: [
       'Optimized Spring Boot APIs using Hibernate-level caching for 25% performance boost.',
       'Migrated Oracle SQL workloads to SQL Server, improving execution by 30%.',
@@ -161,10 +167,10 @@ export const SKILLS: SkillCategory[] = [
     { name: 'Frontend', skills: ['React.js', 'Angular 10', 'Tailwind CSS', 'HTML', 'CSS', 'EJS'] },
     { name: 'Backend', skills: ['Spring Boot', 'Hibernate', 'GORM', 'Gin', 'Node.js', 'Express.js'] },
     { name: 'Databases', skills: ['MySQL', 'PostgreSQL', 'Redis', 'MongoDB', 'Oracle SQL'] },
-    { name: 'Infrastructure', skills: ['AWS (EC2, RDS, S3, VPC, Lambda)', 'Docker', 'Kubernetes'] },
+    { name: 'Infrastructure', skills: ['AWS (EC2, RDS, S3, VPC, Lambda)', 'Docker'] },
     { name: 'Messaging', skills: ['Apache Kafka', 'Socket.io'] },
     { name: 'Monitoring', skills: ['Prometheus'] },
-    { name: 'Tools & DevOps', skills: ['Git', 'Swagger', 'Postman', 'Maven', 'CI/CD', 'Bash', 'IndexedDB'] },
+    { name: 'Tools & DevOps', skills: ['Git', 'Swagger', 'Postman', 'Maven', 'Bash', 'IndexedDB'] },
     { name: 'AI/ML', skills: ['OpenAI API', 'LangChain', 'LLM Integration', 'Vector DBs (RAG)'] },
     { name: 'Other', skills: ['JWT', 'WebSockets', 'System Design', 'Algorithm Optimization'] },
 ];
@@ -177,7 +183,7 @@ export const CURRENT_INTERESTS: string[] = [
     'AI-enhanced developer tools (LLM + Web IDEs)',
 ];
 
-export const SKILL_CATEGORIES: CategorizedSkillGroup[] = [
+const BASE_CATEGORIES: CategorizedSkillGroup[] = [
     {
         name: 'AI & LLM Engineering',
         icon: React.createElement(IconSparkles, { className: 'h-6 w-6' }),
@@ -189,26 +195,39 @@ export const SKILL_CATEGORIES: CategorizedSkillGroup[] = [
         skills: ['Java', 'Spring Boot', 'Golang', 'Gin', 'Node.js', 'Express.js', 'Hibernate', 'GORM', 'Microservices', 'System Design', 'Algorithms'],
     },
     {
-        name: 'Infrastructure & Observability',
-        icon: React.createElement(IconCloud, { className: 'h-6 w-6' }),
-        skills: ['AWS (EC2, RDS, S3, VPC)', 'Docker', 'Kubernetes', 'CI/CD', 'Prometheus', 'Bash Scripting'],
-    },
-    {
         name: 'Data & Storage Systems',
         icon: React.createElement(IconDatabase, { className: 'h-6 w-6' }),
         skills: ['MySQL', 'PostgreSQL', 'Redis (Caching/Queues)', 'MongoDB', 'Oracle SQL', 'IndexedDB'],
     },
     {
-        name: 'Services & Integrations',
-        icon: React.createElement(IconApi, { className: 'h-6 w-6' }),
-        skills: ['Apache Kafka', 'WebSockets', 'Socket.io', 'REST APIs', 'gRPC', 'JWT Auth', 'Swagger/OpenAPI'],
-    },
-    {
-        name: 'Learning & Research',
-        icon: React.createElement(IconBrain, { className: 'h-6 w-6' }),
-        skills: [...CURRENT_INTERESTS],
+        name: 'Infrastructure & Services',
+        icon: React.createElement(IconCloud, { className: 'h-6 w-6' }),
+        skills: [
+            'AWS (EC2, RDS, S3, VPC)', 
+            'Docker', 
+            'Prometheus', 
+            'Bash Scripting',
+            'Apache Kafka', 
+            'WebSockets', 
+            'Socket.io', 
+            'REST APIs', 
+            'gRPC', 
+            'JWT Auth', 
+            'Swagger/OpenAPI'
+        ],
     },
 ];
+
+export const SKILL_CATEGORIES: CategorizedSkillGroup[] = SHOW_LEARNING_AND_RESEARCH
+    ? [
+        ...BASE_CATEGORIES,
+        {
+            name: 'Learning & Research',
+            icon: React.createElement(IconBrain, { className: 'h-6 w-6' }),
+            skills: [...CURRENT_INTERESTS],
+        }
+    ]
+    : BASE_CATEGORIES;
 
 
 export const EDUCATION = {
@@ -218,61 +237,3 @@ export const EDUCATION = {
   cgpa: '8.8 CGPA',
   coursework: ['Algorithms', 'Databases', 'Operating Systems', 'Computer Networks', 'Machine Learning'],
 };
-
-
-export const AI_CONTEXT_DOCUMENT = `
-This is a document about Abhishek “Abhi” Tiwari, a Backend-leaning Full-Stack Software Engineer. Use this information to answer questions about him.
-
-### Personal & Contact Information
-- **Name**: ${PERSONAL_INFO.name}
-- **Title**: ${PERSONAL_INFO.title}
-- **Location**: ${PERSONAL_INFO.location}
-- **Email**: ${PERSONAL_INFO.email}
-- **Phone**: ${PERSONAL_INFO.phone}
-- **Resume Link**: ${RESUME_LINK}
-- **Summary**: ${PERSONAL_INFO.summary}
-
-### Social Links
-${SOCIAL_LINKS.map(link => `- **${link.name}**: ${link.url}`).join('\n')}
-
-### Key Career Highlights
-${KEY_HIGHLIGHTS.map(h => `- **${h.metric}**: ${h.description}`).join('\n')}
-
-### Professional Experience
-${EXPERIENCES.map(exp => `
-- **Role**: ${exp.role}
-- **Company**: ${exp.company}
-- **Period**: ${exp.period}
-- **Location**: ${exp.location}
-- **Details**: 
-${exp.description.map(d => `  - ${d}`).join('\n')}
-`).join('\n')}
-
-### Projects
-${PROJECTS.map(p => `
-- **Title**: ${p.title}
-- **Category**: ${p.category}
-- **Technologies**: ${p.tech.join(', ')}
-- **Tags**: ${p.tags.join(', ')}
-- **Description**: ${p.description}
-- **Link**: ${p.link}
-`).join('\n')}
-
-### Skills
-${SKILLS.map(cat => `
-- **${cat.name}**: ${cat.skills.join(', ')}
-`).join('\n')}
-
-### Current Interests
-${CURRENT_INTERESTS.join(', ')}
-
-### Publications
-He actively writes technical articles on Medium and DEV.to. You can find his latest posts in the "Writing" section of the portfolio, which are fetched live from their respective platforms.
-
-### Education
-- **Degree**: ${EDUCATION.degree}
-- **Institution**: ${EDUCATION.institution}
-- **Period**: ${EDUCATION.period}
-- **CGPA**: ${EDUCATION.cgpa}
-- **Coursework**: ${EDUCATION.coursework.join(', ')}
-`;

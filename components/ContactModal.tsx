@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { IconX } from './icons/IconX';
 import { IconSend } from './icons/IconSend';
 import IconSpinner from './icons/IconSpinner';
+import { useModalFocus } from '../hooks/useModalFocus';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ContactModalProps {
 }
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+  const modalRef = useModalFocus(isOpen, onClose);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,14 +20,6 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,14 +55,16 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       aria-modal="true"
     >
       <div
-        className="bg-slate-50 dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-lg mx-4 flex flex-col border border-slate-200 dark:border-slate-700 relative overflow-hidden"
+        ref={modalRef}
+        className="bg-slate-50 dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-lg mx-4 flex flex-col border border-slate-200 dark:border-slate-700 relative overflow-hidden outline-none"
         onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
       >
         <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-200">Get in Touch</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-500 dark:hover:text-blue-400 transition-colors focus:ring-2 focus:ring-slate-400 focus:outline-none"
             aria-label="Close"
           >
             <IconX className="h-6 w-6" />
@@ -85,7 +81,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
               <p className="text-slate-600 dark:text-slate-400">Thanks for reaching out. I'll get back to you as soon as possible.</p>
               <button
                 onClick={onClose}
-                className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors"
+                className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors focus:ring-2 focus:ring-blue-400 focus:outline-none"
               >
                 Close
               </button>
@@ -135,7 +131,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-md font-semibold transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-md font-semibold transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 >
                   {isSubmitting ? (
                     <>
